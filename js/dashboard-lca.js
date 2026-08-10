@@ -191,7 +191,7 @@ function renderCACards(list){
             `
             ${ca.creators.length} Creators
             &nbsp;&nbsp;•&nbsp;&nbsp;
-            ${ca.totalApprovedReels} Posts
+            ${ca.totalApprovedReels} Reels
             &nbsp;&nbsp;•&nbsp;&nbsp;
             ${Number(ca.totalReferrals || 0).toLocaleString()} Referrals
             `;
@@ -270,11 +270,11 @@ function buildCreatorHTML(creators){
         const postTypes = [
             {
                 number: 1,
-                title: "Reel"
+                title: "Reel 1"
             },
             {
                 number: 2,
-                title: "Carousel"
+                title: "Reel 2"
             }
         ];
 
@@ -344,7 +344,7 @@ function buildCreatorHTML(creators){
                             target="_blank"
                             class="viewReelButton">
 
-                            View Post
+                            View Reel
 
                         </a>
 
@@ -391,7 +391,7 @@ function buildCreatorHTML(creators){
                             target="_blank"
                             class="viewReelButton">
 
-                            View Post
+                            View Reel
 
                         </a>
 
@@ -428,7 +428,7 @@ function buildCreatorHTML(creators){
                         target="_blank"
                         class="viewReelButton">
 
-                        View Post
+                        View Reel
 
                     </a>
 
