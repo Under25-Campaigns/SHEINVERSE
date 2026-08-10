@@ -100,12 +100,12 @@
     </div>
 
     <div class="statCard">
-        <span>Reels</span>
+        <span>Reel 1</span>
         <h2 id="reelCount">0</h2>
     </div>
 
     <div class="statCard">
-        <span>Carousels</span>
+        <span>Reel 2</span>
         <h2 id="carouselCount">0</h2>
     </div>
 
@@ -321,48 +321,31 @@
 <!-- REEL SUBMISSION MODAL -->
 <!-- ========================================= -->
 
-<div
-    id="reelModal"
-    class="modal hidden">
+<div class="modalCard">
+    <h2 id="reelTitle">
+        Submit Reel
+    </h2>
+    <input
+        id="reelLink"
+        type="text"
+        placeholder="Instagram Reel Link">
+    <div class="modalButtons">
 
-    <div class="modalCard">
+        <button
+            class="secondaryButton"
+            onclick="closeReelModal()">
+            Cancel
+        </button>
 
-        <h2 id="reelTitle">
+        <button
+            id="submitReelButton"
+            class="primaryButton"
+            onclick="submitReel()">
 
-            Submit Post
-
-        </h2>
-
-        <input
-            id="reelLink"
-            type="text"
-            placeholder="Submit Post Link">
-
-        <div class="modalButtons">
-
-            <button
-                class="secondaryButton"
-                onclick="closeReelModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                id="submitReelButton"
-                class="primaryButton"
-                onclick="submitReel()">
-
-                Submit Post
-
-            </button>
-
-        </div>
-
+            Submit Reel
+        </button>
     </div>
-
 </div>
-
 
 
 <!-- ========================================= -->
