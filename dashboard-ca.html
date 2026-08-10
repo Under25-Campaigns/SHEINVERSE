@@ -317,34 +317,48 @@
 
 
 
-<!-- ========================================= -->
-<!-- REEL SUBMISSION MODAL -->
-<!-- ========================================= -->
+<!-- ===================================================== -->
+<!-- SUBMIT REEL MODAL -->
+<!-- ===================================================== -->
 
-<div class="modalCard">
-    <h2 id="reelTitle">
-        Submit Reel
-    </h2>
-    <input
-        id="reelLink"
-        type="text"
-        placeholder="Instagram Reel Link">
-    <div class="modalButtons">
+<div
+    id="reelModal"
+    class="modal hidden">
 
-        <button
-            class="secondaryButton"
-            onclick="closeReelModal()">
-            Cancel
-        </button>
+    <div class="modalCard">
 
-        <button
-            id="submitReelButton"
-            class="primaryButton"
-            onclick="submitReel()">
-
+        <h2 id="reelTitle">
             Submit Reel
-        </button>
+        </h2>
+
+        <input
+            id="reelLink"
+            type="text"
+            placeholder="Instagram Reel Link">
+
+        <div class="modalButtons">
+
+            <button
+                class="secondaryButton"
+                onclick="closeReelModal()">
+
+                Cancel
+
+            </button>
+
+            <button
+                id="submitReelButton"
+                class="primaryButton"
+                onclick="submitReel()">
+
+                Submit Reel
+
+            </button>
+
+        </div>
+
     </div>
+
 </div>
 
 
