@@ -106,25 +106,24 @@ function renderDashboard() {
     document.getElementById("totalCreators").innerHTML =
         CREATORS.length;
 
-    let reels = 0;
-    let carousels = 0;
+    let reel1 = 0;
+    let reel2 = 0;
 
     CREATORS.forEach(c => {
 
-        if (c.reel1.exists)
-            reels++;
+        if (c.reel1.exists) {
+            reel1++;
+        }
 
-        if (c.reel2.exists)
-            carousels++;
+        if (c.reel2.exists) {
+            reel2++;
+        }
 
     });
-
-    document.getElementById("reelCount").innerHTML =
-        reels;
-
-    document.getElementById("carouselCount").innerHTML =
-        carousels;
-
+    document.getElementById("reel1Count").innerHTML =
+        reel1;
+    document.getElementById("reel2Count").innerHTML =
+        reel2;
     renderCreatorCards(CREATORS);
 
 }
@@ -178,21 +177,15 @@ function renderCreatorCards(creators){
                 <div class="creatorIdentity">
 
                     <span class="creatorEmoji">
-
                         👤
-
                     </span>
 
                     <span class="creatorSectionName">
-
                         ${creator.name}
-
                     </span>
 
                     <span class="creatorDivider">
-
                         |
-
                     </span>
 
                     <a
@@ -205,9 +198,7 @@ function renderCreatorCards(creators){
                     </a>
 
                     <span class="creatorDivider">
-
                         |
-
                     </span>
 
                     <span class="creatorFollowers">
@@ -226,20 +217,18 @@ function renderCreatorCards(creators){
             creator,
             creator.reel1,
             1,
-            "Reel"
+            "Reel 1"
         );
 
         html += buildCARow(
             creator,
             creator.reel2,
             2,
-            "Carousel"
+            "Reel 2"
         );
 
         html += `
-
         </div>
-
         `;
 
         container.innerHTML += html;
@@ -720,14 +709,12 @@ function openReelModal(
     input.value = "";
 
     title.innerHTML =
-        CURRENT_REEL_NUMBER === 1
-            ? "Submit Reel"
-            : "Submit Carousel";
+        "Submit Reel " + CURRENT_REEL_NUMBER;
 
     button.disabled = false;
 
     button.innerHTML =
-        "Submit Post";
+        "Submit Reel";
 
     document
         .getElementById("reelModal")
