@@ -1,108 +1,51 @@
 let SESSION = null;
-
 let COLLEGES = [];
-
 let CURRENT_TYPE = "";
-
 let CURRENT_ID = "";
-
 let CURRENT_NAME = "";
-
-
-/* ===========================================================
-   ADMIN UI STATE
-=========================================================== */
-
-let ADMIN_UI_STATE = {
-
-    searchQuery: "",
-
-    openCollege: "",
-
-    openCA: "",
-
-    scrollY: 0
-
-};
-
-
 /* ===========================================================
    INITIALIZE
 =========================================================== */
-
-window.addEventListener("load", () => {
-
+window.addEventListener("load",()=>{
     validateSession();
-
 });
-
-
 /* ===========================================================
    SESSION
 =========================================================== */
-
 function validateSession(){
-
     const raw =
         localStorage.getItem("SHEIN_SESSION");
-
     if(!raw){
-
-        location.href = "index.html";
-
+        location.href="index.html";
         return;
-
     }
-
     SESSION =
         JSON.parse(raw);
-
-    if(SESSION.role !== "ADMIN"){
-
-        location.href = "index.html";
-
+    if(SESSION.role!=="ADMIN"){
+        location.href="index.html";
         return;
-
     }
-
-    document
-        .getElementById("welcomeText")
-        .innerHTML =
-        "Welcome, " + SESSION.name;
-
+    document.getElementById("welcomeText").innerHTML=
+        "Welcome, "+SESSION.name;
     startSessionTimer();
-
     loadDashboard();
-
 }
 
-
 function logout(){
-
     localStorage.removeItem(
         "SHEIN_SESSION"
     );
-
-    location.href =
-        "index.html";
-
+    location.href="index.html";
 }
-
-
 /* ===========================================================
    AUTO LOGOUT
 =========================================================== */
 
 const SESSION_TIMEOUT =
-    15 * 60 * 1000;
-
+    15*60*1000;
 let inactivityTimer;
-
-
 function startSessionTimer(){
-
     resetSessionTimer();
-
     [
         "mousemove",
         "mousedown",
@@ -110,170 +53,65 @@ function startSessionTimer(){
         "scroll",
         "keypress",
         "touchstart"
-    ].forEach(event => {
-
+    ].forEach(event=>{
         document.addEventListener(
             event,
             resetSessionTimer
         );
-
     });
-
 }
-
-
 function resetSessionTimer(){
-
     clearTimeout(
         inactivityTimer
     );
-
-    inactivityTimer =
-        setTimeout(() => {
-
+    inactivityTimer=
+        setTimeout(()=>{
             alert(
                 "Your session has expired."
             );
-
             logout();
-
-        }, SESSION_TIMEOUT);
-
+        },SESSION_TIMEOUT);
 }
 
 
 /* ===========================================================
-   CAPTURE ADMIN STATE
+   LOAD
 =========================================================== */
-
-function captureAdminUIState(){
-
-    const searchInput =
-        document.getElementById(
-            "searchCollege"
-        );
-
-    if(searchInput){
-
-        ADMIN_UI_STATE.searchQuery =
-            searchInput.value;
-
-    }
-
-    const openCollege =
-        document.querySelector(
-            ".collegeCard.open"
-        );
-
-    ADMIN_UI_STATE.openCollege =
-        openCollege
-            ? String(
-                openCollege.dataset.collegeName || ""
-            )
-            : "";
-
-    const openCA =
-        document.querySelector(
-            ".adminCACard.open"
-        );
-
-    ADMIN_UI_STATE.openCA =
-        openCA
-            ? String(
-                openCA.dataset.caUsername || ""
-            )
-            : "";
-
-    ADMIN_UI_STATE.scrollY =
-        window.scrollY || 0;
-
-}
-
-/* ===========================================================
-   LOAD DASHBOARD
-=========================================================== */
-
 async function loadDashboard(){
-
-    /*
-        IMPORTANT:
-        Capture the current search / expanded cards / scroll
-        BEFORE fetching fresh dashboard data.
-    */
-
-    captureAdminUIState();
-
     try{
-
         const response =
             await fetch(
-
-                CONFIG.API_URL +
-
-                "?action=getAdminDashboard" +
-
-                "&adminUsername=" +
-
+                CONFIG.API_URL+
+                "?action=getAdminDashboard"+
+                "&adminUsername="+
                 encodeURIComponent(
                     SESSION.username
-                ) +
-
-                "&t=" +
-
-                Date.now()
-
+                )
             );
-
         const data =
             await response.json();
-
-
         if(!data.success){
-
-            alert(
-                data.message
-            );
-
+            alert(data.message);
             return;
-
         }
 
-
         COLLEGES =
-            Array.isArray(data.colleges)
-                ? data.colleges
-                : [];
-
-
+            data.colleges;
         renderOverview(
-            data.overview || {}
+            data.overview
         );
-
-
-        /*
-            DO NOT simply call:
-
-            renderCollegeCards(COLLEGES);
-
-            We render using the current search state instead.
-        */
-
-        renderCurrentAdminView();
-
+        renderCollegeCards(
+            COLLEGES
+        );
     }
 
     catch(err){
-
         console.error(err);
-
         alert(
             "Unable to connect."
         );
-
     }
-
 }
-
 
 /* ===========================================================
    OVERVIEW
@@ -281,665 +119,101 @@ async function loadDashboard(){
 
 function renderOverview(overview){
 
-    const activeLCAs =
-        document.getElementById(
-            "activeLCAs"
-        );
-
-    if(activeLCAs){
-
-        activeLCAs.innerHTML =
-            Number(
-                overview.activeLCAs || 0
-            ).toLocaleString();
-
-    }
-
-
-    const activeCAs =
-        document.getElementById(
-            "activeCAs"
-        );
-
-    if(activeCAs){
-
-        activeCAs.innerHTML =
-            Number(
-                overview.activeCAs || 0
-            ).toLocaleString();
-
-    }
-
-
-    const activeCreators =
-        document.getElementById(
-            "activeCreators"
-        );
-
-    if(activeCreators){
-
-        activeCreators.innerHTML =
-            Number(
-                overview.activeCreators || 0
-            ).toLocaleString();
-
-    }
-
-
-    const approvedReels =
-        document.getElementById(
-            "approvedReels"
-        );
-
-    if(approvedReels){
-
-        approvedReels.innerHTML =
-            Number(
-                overview.approvedReels || 0
-            ).toLocaleString();
-
-    }
-
-
-    /*
-        Your dashboard previously used
-        approvedCarousels.
-
-        We are keeping the ID here so this
-        does NOT break your existing HTML.
-
-        It can visually say "Reel 2" in the HTML.
-    */
-
-    const approvedCarousels =
-        document.getElementById(
-            "approvedCarousels"
-        );
-
-    if(approvedCarousels){
-
-        approvedCarousels.innerHTML =
-            Number(
-                overview.approvedCarousels || 0
-            ).toLocaleString();
-
-    }
-
-
-    const totalReferrals =
-        document.getElementById(
-            "totalReferrals"
-        );
-
-    if(totalReferrals){
-
-        totalReferrals.innerHTML =
-            Number(
-                overview.totalReferrals || 0
-            ).toLocaleString();
-
-    }
-
-}
-
-
-/* ===========================================================
-   FILTER COLLEGES
-=========================================================== */
-
-function getFilteredColleges(query){
-
-    const normalizedQuery =
-        String(
-            query || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    if(
-        normalizedQuery === ""
-    ){
-
-        return COLLEGES;
-
-    }
-
-
-    return COLLEGES.filter(
-        college => {
-
-            /*
-                COLLEGE NAME
-            */
-
-            const collegeMatch =
-                String(
-                    college.college || ""
-                )
-                .toLowerCase()
-                .includes(
-                    normalizedQuery
-                );
-
-            if(collegeMatch){
-
-                return true;
-
-            }
-
-
-            /*
-                LCA NAME
-            */
-
-            const lcaMatch =
-                (
-                    college.lcas || []
-                )
-                .some(
-                    lca =>
-
-                        String(
-                            lca.name || ""
-                        )
-                        .toLowerCase()
-                        .includes(
-                            normalizedQuery
-                        )
-
-                );
-
-            if(lcaMatch){
-
-                return true;
-
-            }
-
-
-            /*
-                CA / CREATOR SEARCH
-            */
-
-            return (
-                college.campusAmbassadors || []
-            )
-            .some(
-                ca => {
-
-                    /*
-                        CA NAME
-                    */
-
-                    const caNameMatch =
-                        String(
-                            ca.name || ""
-                        )
-                        .toLowerCase()
-                        .includes(
-                            normalizedQuery
-                        );
-
-                    if(caNameMatch){
-
-                        return true;
-
-                    }
-
-
-                    /*
-                        CA USERNAME
-                    */
-
-                    const caUsernameMatch =
-                        String(
-                            ca.username || ""
-                        )
-                        .toLowerCase()
-                        .includes(
-                            normalizedQuery
-                        );
-
-                    if(caUsernameMatch){
-
-                        return true;
-
-                    }
-
-
-                    /*
-                        CREATOR
-                    */
-
-                    return (
-                        ca.creators || []
-                    )
-                    .some(
-                        creator => {
-
-                            const creatorName =
-                                String(
-                                    creator.name || ""
-                                )
-                                .toLowerCase();
-
-                            const instagram =
-                                String(
-                                    creator.instagram || ""
-                                )
-                                .replace(
-                                    /^@/,
-                                    ""
-                                )
-                                .toLowerCase();
-
-                            const cleanSearch =
-                                normalizedQuery
-                                .replace(
-                                    /^@/,
-                                    ""
-                                );
-
-                            return (
-
-                                creatorName.includes(
-                                    normalizedQuery
-                                )
-
-                                ||
-
-                                instagram.includes(
-                                    cleanSearch
-                                )
-
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* ===========================================================
-   RENDER CURRENT VIEW
-=========================================================== */
-
-function renderCurrentAdminView(){
-
-    const filtered =
-        getFilteredColleges(
-            ADMIN_UI_STATE.searchQuery
-        );
-
-
-    renderCollegeCards(
-        filtered
-    );
-
-
-    /*
-        Once the HTML has been rebuilt,
-        reopen the cards that were previously open.
-    */
-
-    restoreAdminUIState();
-
-}
-
-
-/* ===========================================================
-   RESTORE ADMIN STATE
-=========================================================== */
-
-function restoreAdminUIState(){
-
-    /*
-        RESTORE SEARCH
-    */
-
-    const searchInput =
-        document.getElementById(
-            "searchCollege"
-        );
-
-    if(searchInput){
-
-        searchInput.value =
-            ADMIN_UI_STATE.searchQuery || "";
-
-    }
-
-
-    /*
-        RESTORE COLLEGE
-    */
-
-    if(
-        ADMIN_UI_STATE.openCollege
-    ){
-
-        document
-            .querySelectorAll(
-                ".collegeCard"
-            )
-            .forEach(
-                card => {
-
-                    const collegeName =
-                        String(
-                            card.dataset.collegeName || ""
-                        );
-
-                    if(
-                        collegeName !==
-                        ADMIN_UI_STATE.openCollege
-                    ){
-
-                        return;
-
-                    }
-
-
-                    card.classList.add(
-                        "open"
-                    );
-
-
-                    const body =
-                        card.querySelector(
-                            ".collegeBody"
-                        );
-
-                    if(body){
-
-                        body.style.display =
-                            "block";
-
-                    }
-
-
-                    const icon =
-                        card.querySelector(
-                            ".collegeHeader .expandIcon"
-                        );
-
-                    if(icon){
-
-                        icon.textContent =
-                            "▲";
-
-                    }
-
-                }
-            );
-
-    }
-
-
-    /*
-        RESTORE CA
-    */
-
-    if(
-        ADMIN_UI_STATE.openCA
-    ){
-
-        document
-            .querySelectorAll(
-                ".adminCACard"
-            )
-            .forEach(
-                card => {
-
-                    const username =
-                        String(
-                            card.dataset.caUsername || ""
-                        );
-
-                    if(
-                        username !==
-                        ADMIN_UI_STATE.openCA
-                    ){
-
-                        return;
-
-                    }
-
-
-                    card.classList.add(
-                        "open"
-                    );
-
-
-                    const body =
-                        card.querySelector(
-                            ".adminCABody"
-                        );
-
-                    if(body){
-
-                        body.style.display =
-                            "block";
-
-                    }
-
-
-                    const icon =
-                        card.querySelector(
-                            ".adminExpandIcon"
-                        );
-
-                    if(icon){
-
-                        icon.textContent =
-                            "▲";
-
-                    }
-
-                }
-            );
-
-    }
-
-
-    /*
-        RESTORE SCROLL POSITION
-
-        Two animation frames are intentional.
-
-        First frame:
-        browser finishes rendering cards.
-
-        Second frame:
-        scroll back to the previous position.
-    */
-
-    const savedScroll =
+    document
+        .getElementById("activeLCAs")
+        .innerHTML =
         Number(
-            ADMIN_UI_STATE.scrollY || 0
-        );
+            overview.activeLCAs || 0
+        ).toLocaleString();
 
+    document
+        .getElementById("activeCAs")
+        .innerHTML =
+        Number(
+            overview.activeCAs || 0
+        ).toLocaleString();
 
-    requestAnimationFrame(
-        () => {
+    document
+        .getElementById("activeCreators")
+        .innerHTML =
+        Number(
+            overview.activeCreators || 0
+        ).toLocaleString();
 
-            requestAnimationFrame(
-                () => {
+    document
+        .getElementById("approvedReels")
+        .innerHTML =
+        Number(
+            overview.approvedReels || 0
+        ).toLocaleString();
 
-                    window.scrollTo(
-                        0,
-                        savedScroll
-                    );
+    document
+        .getElementById("approvedCarousels")
+        .innerHTML =
+        Number(
+            overview.approvedCarousels || 0
+        ).toLocaleString();
 
-                }
-            );
-
-        }
-    );
-
+    document
+        .getElementById("totalReferrals")
+        .innerHTML =
+        Number(
+            overview.totalReferrals || 0
+        ).toLocaleString();
 }
-
-
-/* ===========================================================
-   SEARCH EVENT
-=========================================================== */
-
-function initializeAdminSearch(){
-
-    const searchInput =
-        document.getElementById(
-            "searchCollege"
-        );
-
-
-    if(!searchInput){
-
-        return;
-
-    }
-
-
-    searchInput.addEventListener(
-        "input",
-        function(){
-
-            /*
-                Store the actual search immediately.
-            */
-
-            ADMIN_UI_STATE.searchQuery =
-                this.value;
-
-
-            /*
-                When searching, don't preserve the old
-                scroll position.
-
-                Otherwise the browser can jump down to
-                where the admin was before the search.
-            */
-            ADMIN_UI_STATE.scrollY =
-                0;
-            renderCurrentAdminView();
-        }
-    );
-}
-
-
-/*
-    Initialize search once the DOM exists.
-*/
-if(
-    document.readyState ===
-    "loading"
-){
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeAdminSearch
-    );
-}
-else{
-    initializeAdminSearch();
-}
-
 /* ===========================================================
    COLLEGE CARDS
 =========================================================== */
-
 function renderCollegeCards(colleges){
-
     const container =
         document.getElementById(
             "collegeContainer"
         );
-
     const template =
         document.getElementById(
             "collegeTemplate"
         );
-
-    container.innerHTML = "";
-
+    container.innerHTML="";
     if(!colleges.length){
-
-        container.innerHTML = `
-
+        container.innerHTML=`
             <div class="adminEmptyState">
-
                 No colleges found.
-
             </div>
-
         `;
-
         return;
-
     }
-
     colleges.forEach(college=>{
-
         const node =
             template.content.cloneNode(
                 true
             );
-
-        const collegeCard =
-            node.querySelector(
-                ".collegeCard"
-            );
-
-        if(collegeCard){
-
-            collegeCard.dataset.collegeName =
-                String(
-                    college.college || ""
-                );
-
-        }
-
         node
             .querySelector(
                 ".collegeName"
             )
             .textContent =
             college.college;
-
         node
             .querySelector(
                 ".collegeStats"
             )
             .innerHTML = `
-
                 ${Number(
                     college.totalCAs || 0
                 ).toLocaleString()} CAs
-
                 <span>•</span>
-
                 ${Number(
                     college.totalCreators || 0
                 ).toLocaleString()} Creators
-
                 <span>•</span>
-
                 ${Number(
                     college.totalPosts || 0
                 ).toLocaleString()} Posts
-
                 <span>•</span>
-
                 ${Number(
                     college.totalReferrals || 0
                 ).toLocaleString()} Referrals
-
             `;
-
         node
             .querySelector(
                 ".collegeDetails"
@@ -948,102 +222,61 @@ function renderCollegeCards(colleges){
             buildCollegeDetails(
                 college
             );
-
         container.appendChild(
             node
         );
-
     });
-
 }
-
-
 /* ===========================================================
    COLLEGE DETAILS
 =========================================================== */
-
 function buildCollegeDetails(college){
-
-    let html = "";
-
+    let html="";
     const lcas =
         Array.isArray(college.lcas)
             ? college.lcas
             : [];
 
     if(lcas.length){
-
-        html += `
-
+        html+=`
             <div class="adminLCASection">
-
                 <div class="adminSectionLabel">
-
                     Lead Campus Ambassador
-
                 </div>
-
         `;
-
         lcas.forEach(lca=>{
-
-            html += `
-
+            html+=`
                 <div class="adminLCARow">
-
                     <span class="adminLCAName">
-
                         ${escapeHTML(
                             lca.name
                         )}
-
                     </span>
-
                     <span class="adminLCAReferrals">
-
                         ${Number(
                             lca.referrals || 0
                         ).toLocaleString()}
                         Referrals
-
                     </span>
-
                 </div>
-
             `;
-
         });
-
-        html += `
-
+        html+=`
             </div>
-
         `;
-
     }
-
-    html += `
-
+    html+=`
         <div class="adminCASection">
-
             <div class="adminSectionLabel">
-
                 Campus Ambassadors
-
             </div>
-
             ${buildCAList(
                 college.campusAmbassadors || []
             )}
-
         </div>
-
     `;
-
     return html;
-
 }
-
 
 /* ===========================================================
    CAMPUS AMBASSADOR LIST
@@ -1065,17 +298,13 @@ function buildCAList(campusAmbassadors){
 
     }
 
-    let html = "";
+    let html="";
 
     campusAmbassadors.forEach(ca=>{
 
-        html += `
+        html+=`
 
-            <div
-                class="adminCACard"
-                data-ca-username="${escapeAttribute(
-                    ca.username
-                )}">
+            <div class="adminCACard">
 
                 <div
                     class="adminCAHeader"
@@ -1177,11 +406,11 @@ function buildCreatorList(creators){
 
     }
 
-    let html = "";
+    let html="";
 
     creators.forEach(creator=>{
 
-        html += `
+        html+=`
 
             <div class="adminCreatorRow">
 
@@ -1223,12 +452,12 @@ function buildCreatorList(creators){
                 <div class="adminPostStatuses">
 
                     ${buildPostStatus(
-                        "Reel 1",
+                        "Reel",
                         creator.reel
                     )}
 
                     ${buildPostStatus(
-                        "Reel 2",
+                        "Carousel",
                         creator.carousel
                     )}
 
@@ -1262,10 +491,7 @@ function buildCreatorList(creators){
    POST STATUS
 =========================================================== */
 
-function buildPostStatus(
-    label,
-    post
-){
+function buildPostStatus(label,post){
 
     const status =
         String(
@@ -1280,7 +506,7 @@ function buildPostStatus(
     let statusText =
         "Not Submitted";
 
-    if(status === "APPROVED"){
+    if(status==="APPROVED"){
 
         statusClass =
             "adminPostApproved";
@@ -1290,7 +516,7 @@ function buildPostStatus(
 
     }
 
-    else if(status === "PENDING"){
+    else if(status==="PENDING"){
 
         statusClass =
             "adminPostPending";
@@ -1300,7 +526,7 @@ function buildPostStatus(
 
     }
 
-    else if(status === "REJECTED"){
+    else if(status==="REJECTED"){
 
         statusClass =
             "adminPostRejected";
@@ -1335,8 +561,7 @@ function buildPostStatus(
 
     return `
 
-        <span
-            class="adminPostStatus ${statusClass}">
+        <span class="adminPostStatus ${statusClass}">
 
             ${label} • ${statusText}
 
@@ -1348,7 +573,7 @@ function buildPostStatus(
 
 
 /* ===========================================================
-   EXPAND / COLLAPSE - COLLEGE
+   EXPAND / COLLAPSE
 =========================================================== */
 
 function toggleCollege(header){
@@ -1373,107 +598,46 @@ function toggleCollege(header){
             "open"
         );
 
-
-    /*
-        Keep only one college open at a time.
-    */
-
     document
         .querySelectorAll(
             ".collegeCard.open"
         )
         .forEach(openCard=>{
 
-            if(openCard === card){
+            if(openCard!==card){
 
-                return;
-
-            }
-
-            openCard.classList.remove(
-                "open"
-            );
-
-            const openBody =
-                openCard.querySelector(
-                    ".collegeBody"
+                openCard.classList.remove(
+                    "open"
                 );
-
-            if(openBody){
-
-                openBody.style.display =
-                    "none";
-
-            }
-
-            const openIcon =
-                openCard.querySelector(
-                    ".collegeHeader .expandIcon"
-                );
-
-            if(openIcon){
-
-                openIcon.textContent =
-                    "▼";
-
-            }
-
+                const openIcon =
+                    openCard.querySelector(
+                        ".collegeHeader .expandIcon"
+                    );
+                if(openIcon){
+                    openIcon.textContent="▼";
+                }
+           }
         });
-
-
     card.classList.toggle(
         "open",
         !isOpen
     );
-
     if(body){
-
         body.style.display =
             isOpen
                 ? "none"
                 : "block";
-
     }
-
     if(icon){
-
         icon.textContent =
             isOpen
                 ? "▼"
                 : "▲";
-
     }
-
-
-    /*
-        Save exactly which college is open.
-    */
-
-    ADMIN_UI_STATE.openCollege =
-        isOpen
-            ? ""
-            : String(
-                card.dataset.collegeName || ""
-            );
-
-
-    /*
-        If college is closed,
-        its CA cannot remain open in state.
-    */
-
-    if(isOpen){
-
-        ADMIN_UI_STATE.openCA =
-            "";
-
-    }
-
 }
 
-
 /* ===========================================================
-   EXPAND / COLLAPSE - CA
+   CA EXPAND / COLLAPSE
 =========================================================== */
 
 function toggleAdminCA(header){
@@ -1498,64 +662,6 @@ function toggleAdminCA(header){
             "open"
         );
 
-
-    /*
-        Keep one CA open at a time
-        inside the currently open college.
-    */
-
-    const collegeCard =
-        card.closest(
-            ".collegeCard"
-        );
-
-    if(collegeCard){
-
-        collegeCard
-            .querySelectorAll(
-                ".adminCACard.open"
-            )
-            .forEach(openCard=>{
-
-                if(openCard === card){
-
-                    return;
-
-                }
-
-                openCard.classList.remove(
-                    "open"
-                );
-
-                const openBody =
-                    openCard.querySelector(
-                        ".adminCABody"
-                    );
-
-                if(openBody){
-
-                    openBody.style.display =
-                        "none";
-
-                }
-
-                const openIcon =
-                    openCard.querySelector(
-                        ".adminExpandIcon"
-                    );
-
-                if(openIcon){
-
-                    openIcon.textContent =
-                        "▼";
-
-                }
-
-            });
-
-    }
-
-
     card.classList.toggle(
         "open",
         !isOpen
@@ -1579,15 +685,127 @@ function toggleAdminCA(header){
 
     }
 
+}
 
-    ADMIN_UI_STATE.openCA =
-        isOpen
-            ? ""
-            : String(
-                card.dataset.caUsername || ""
+
+/* ===========================================================
+   SEARCH
+=========================================================== */
+
+const searchCollege =
+    document.getElementById(
+        "searchCollege"
+    );
+
+if(searchCollege){
+
+    searchCollege.addEventListener(
+        "input",
+        function(){
+
+            const query =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+            if(query===""){
+
+                renderCollegeCards(
+                    COLLEGES
+                );
+
+                return;
+
+            }
+
+            const filtered =
+                COLLEGES.filter(college=>{
+
+                    if(
+                        String(
+                            college.college || ""
+                        )
+                        .toLowerCase()
+                        .includes(query)
+                    ){
+
+                        return true;
+
+                    }
+
+                    const lcaMatch =
+                        (college.lcas || [])
+                        .some(lca=>
+
+                            String(
+                                lca.name || ""
+                            )
+                            .toLowerCase()
+                            .includes(query)
+
+                        );
+
+                    if(lcaMatch){
+
+                        return true;
+
+                    }
+
+                    const caMatch =
+                        (
+                            college
+                                .campusAmbassadors || []
+                        )
+                        .some(ca=>{
+
+                            if(
+                                String(
+                                    ca.name || ""
+                                )
+                                .toLowerCase()
+                                .includes(query)
+                            ){
+
+                                return true;
+
+                            }
+
+                            return (
+                                ca.creators || []
+                            )
+                            .some(creator=>
+
+                                String(
+                                    creator.name || ""
+                                )
+                                .toLowerCase()
+                                .includes(query)
+
+                                ||
+
+                                String(
+                                    creator.instagram || ""
+                                )
+                                .toLowerCase()
+                                .includes(query)
+
+                            );
+
+                        });
+
+                    return caMatch;
+
+                });
+
+            renderCollegeCards(
+                filtered
             );
 
+        }
+    );
+
 }
+
 
 /* ===========================================================
    OPEN DEACTIVATE MODAL
@@ -1624,7 +842,7 @@ function openDeactivateModal(
         );
 
     title.textContent =
-        type === "CA"
+        type==="CA"
             ? "Deactivate Campus Ambassador"
             : "Deactivate Creator";
 
@@ -1687,12 +905,9 @@ function closeDeactivateModal(){
         );
 
 }
-
-
 /* ===========================================================
    CONFIRM DEACTIVATION
 =========================================================== */
-
 async function confirmDeactivation(){
 
     if(
@@ -1703,27 +918,6 @@ async function confirmDeactivation(){
         return;
 
     }
-
-    /*
-        Capture state BEFORE deactivation.
-        This is the critical part.
-    */
-
-    const searchInput =
-        document.getElementById(
-            "searchCollege"
-        );
-
-    if(searchInput){
-
-        ADMIN_UI_STATE.searchQuery =
-            searchInput.value;
-
-    }
-
-    ADMIN_UI_STATE.scrollY =
-        window.scrollY || 0;
-
 
     const button =
         document.getElementById(
@@ -1736,19 +930,13 @@ async function confirmDeactivation(){
     button.textContent =
         "Deactivating...";
 
-
     try{
 
-        let action =
-            "";
+        let action = "";
 
-        let parameter =
-            "";
+        let parameter = "";
 
-
-        if(
-            CURRENT_TYPE === "CA"
-        ){
+        if(CURRENT_TYPE==="CA"){
 
             action =
                 "adminDeactivateCA";
@@ -1773,105 +961,52 @@ async function confirmDeactivation(){
                 );
 
         }
-
-
         const response =
             await fetch(
-
                 CONFIG.API_URL +
-
                 "?action=" +
                 action +
-
                 "&adminUsername=" +
                 encodeURIComponent(
                     SESSION.username
                 ) +
-
-                parameter +
-
-                "&t=" +
-                Date.now()
-
+                parameter
             );
-
-
         const data =
             await response.json();
-
-
         if(!data.success){
-
             button.disabled =
                 false;
-
             button.textContent =
                 "Deactivate";
-
             alert(
                 data.message
             );
-
             return;
-
         }
-
-
         button.textContent =
             "Deactivated ✓";
-
-
         await new Promise(
-            resolve =>
+            resolve=>
                 setTimeout(
                     resolve,
                     800
-                )
+              )
         );
-
-
-        /*
-            IMPORTANT:
-            closeDeactivateModal() resets CURRENT_ID etc.,
-            but DOES NOT touch ADMIN_UI_STATE.
-        */
-
         closeDeactivateModal();
-
-
-        /*
-            Reload fresh backend data.
-
-            loadDashboard() will:
-            - fetch new data
-            - preserve current search
-            - rerender filtered results
-            - restore the open college/CA
-            - restore scroll position
-        */
-
         await loadDashboard();
-
     }
-
     catch(err){
-
         console.error(err);
-
         button.disabled =
             false;
-
         button.textContent =
             "Deactivate";
-
         alert(
             "Unable to deactivate."
         );
-
     }
-
 }
-
 
 /* ===========================================================
    HTML ESCAPING
@@ -1905,12 +1040,8 @@ function escapeHTML(value){
         /'/g,
         "&#039;"
     );
-
 }
-
-
 function escapeAttribute(value){
-
     return escapeHTML(
         value
     )
@@ -1918,172 +1049,80 @@ function escapeAttribute(value){
         /`/g,
         "&#096;"
     );
-
 }
-
-
 /* ===========================================================
    REFRESH BUTTON
 =========================================================== */
-
 async function refreshDashboard(){
-
     const button =
         document.getElementById(
             "refreshButton"
         );
-
     if(button){
-
         button.disabled =
             true;
-
         button.textContent =
             "Refreshing...";
-
     }
-
-
-    /*
-        Preserve state before manual refresh.
-    */
-
-    captureAdminUIState();
-
-
     await loadDashboard();
-
-
     if(button){
-
         button.disabled =
             false;
-
         button.textContent =
             "Refresh";
-
     }
-
 }
-
-
 /* ===========================================================
    MODAL OUTSIDE CLICK
 =========================================================== */
-
 window.addEventListener(
     "click",
     function(event){
-
         const modal =
             document.getElementById(
                 "deactivateModal"
             );
-
         if(
             modal &&
             event.target === modal
         ){
-
             closeDeactivateModal();
-
         }
-
     }
 );
-
-
 /* ===========================================================
    ESCAPE KEY
 =========================================================== */
-
 document.addEventListener(
     "keydown",
     function(event){
-
-        if(
-            event.key === "Escape"
-        ){
-
+        if(event.key==="Escape"){
             closeDeactivateModal();
-
         }
-
     }
 );
-
-
 /* ===========================================================
    PAGE VISIBILITY
 =========================================================== */
-
 document.addEventListener(
     "visibilitychange",
     function(){
-
         if(!document.hidden){
-
             resetSessionTimer();
-
         }
-
     }
 );
-
-
 /* ===========================================================
    AUTO REFRESH
 =========================================================== */
-
 setInterval(
-    async function(){
-
+    function(){
         if(
-            !SESSION ||
-            SESSION.role !== "ADMIN"
+            SESSION &&
+            SESSION.role==="ADMIN"
         ){
-
-            return;
-
+            loadDashboard();
         }
-
-
-        /*
-            If a deactivation modal is currently open,
-            don't refresh underneath the admin.
-
-            Otherwise the DOM can rebuild while they're
-            trying to confirm an action.
-        */
-
-        const deactivateModal =
-            document.getElementById(
-                "deactivateModal"
-            );
-
-        if(
-            deactivateModal &&
-            !deactivateModal.classList.contains(
-                "hidden"
-            )
-        ){
-
-            return;
-
-        }
-
-
-        /*
-            Preserve search / expanded cards / scroll
-            before automatic refresh.
-        */
-
-        captureAdminUIState();
-
-
-        await loadDashboard();
-
     },
-
     60000
 );
