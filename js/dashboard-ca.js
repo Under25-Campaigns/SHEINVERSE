@@ -76,38 +76,26 @@ function resetSessionTimer() {
 async function loadDashboard() {
 
     try {
-
         const response = await fetch(
             CONFIG.API_URL +
             "?action=getCAOverview" +
             "&assignedCA=" +
             encodeURIComponent(SESSION.name)
         );
-
         const data = await response.json();
-
         if (!data.success) {
             alert(data.message);
             return;
         }
-
         CREATORS = data.creators;
-
         renderDashboard();
-
-        await loadReferralData();
-
     }
-
     catch (err) {
-
         console.error(err);
-
         alert("Unable to connect.");
-
     }
-
 }
+
 
 /* ===========================================================
    RENDER
@@ -115,45 +103,28 @@ async function loadDashboard() {
 
 function renderDashboard() {
 
+    document.getElementById("totalCreators").innerHTML =
+        CREATORS.length;
+
     let reel1 = 0;
     let reel2 = 0;
 
     CREATORS.forEach(c => {
 
-        if (
-            c.reel1 &&
-            c.reel1.exists
-        ) {
+        if (c.reel1.exists) {
             reel1++;
         }
 
-        if (
-            c.reel2 &&
-            c.reel2.exists
-        ) {
+        if (c.reel2.exists) {
             reel2++;
         }
 
     });
-
-    animateCounter(
-        document.getElementById("totalCreators"),
-        CREATORS.length
-    );
-
-    animateCounter(
-        document.getElementById("reel1Count"),
-        reel1
-    );
-
-    animateCounter(
-        document.getElementById("reel2Count"),
-        reel2
-    );
-
-    renderCreatorCards(
-        CREATORS
-    );
+    document.getElementById("reel1Count").innerHTML =
+        reel1;
+    document.getElementById("reel2Count").innerHTML =
+        reel2;
+    renderCreatorCards(CREATORS);
 
 }
 
@@ -988,6 +959,40 @@ function animateCounter(element, endValue) {
 }
 
 
+/* ===========================================================
+   OVERRIDE RENDER
+=========================================================== */
+const originalRenderDashboard = renderDashboard;
+renderDashboard = function () {
+    originalRenderDashboard();
+    animateCounter(
+        document.getElementById("totalCreators"),
+        CREATORS.length
+    );
+
+    let r1 = 0;
+    let r2 = 0;
+    let r3 = 0;
+
+    CREATORS.forEach(c => {
+        if (c.reel1.exists) r1++;
+        if (c.reel2.exists) r2++;
+        if (c.reel3.exists) r3++;
+    });
+  
+    animateCounter(
+        document.getElementById("reel1Count"),
+        r1
+    );
+    animateCounter(
+        document.getElementById("reel2Count"),
+        r2
+    );
+    animateCounter(
+        document.getElementById("reel3Count"),
+        r3
+    );
+};
 
 /* ===========================================================
    REFERRAL CARD
@@ -1228,7 +1233,11 @@ window.addEventListener("click",function(e){
    LOAD REFERRALS ON DASHBOARD
 =========================================================== */
 
-
+const originalLoadDashboard = loadDashboard;
+loadDashboard = async function(){
+    await originalLoadDashboard();
+    await loadReferralData();
+};
 
 function updateFileName(input) {
 
