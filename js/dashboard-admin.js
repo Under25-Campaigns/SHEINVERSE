@@ -83,20 +83,12 @@ async function loadDashboard(){
 
         const response =
             await fetch(
-
-                CONFIG.API_URL +
-                "?action=getAdminDashboard" +
-                "&adminUsername=" +
+                CONFIG.API_URL+
+                "?action=getAdminDashboard"+
+                "&adminUsername="+
                 encodeURIComponent(
                     SESSION.username
-                ) +
-                "&t=" +
-                Date.now(),
-
-                {
-                    cache: "no-store"
-                }
-
+                )
             );
 
         const data =
@@ -105,7 +97,6 @@ async function loadDashboard(){
         if(!data.success){
 
             alert(data.message);
-
             return;
 
         }
