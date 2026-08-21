@@ -1547,3 +1547,63 @@ font-weight:600;
     line-height:1.5;
     min-height:22px;
 }
+
+/* ===========================================================
+   HYPE SQUAD
+=========================================================== */
+
+.dashboardSectionTitle{
+    margin:34px 0 16px;
+    font-size:20px;
+    font-weight:700;
+    color:#ffffff;
+}
+
+.dashboardSectionDivider{
+    opacity:.5;
+    margin:0 8px;
+}
+
+.hypeTitle{
+    margin-top:46px;
+}
+
+.hypeContainer{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-bottom:40px;
+}
+
+.hypeMemberRow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:20px 24px;
+    border-radius:16px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.10);
+}
+
+.hypeMemberName{
+    color:#ffffff;
+    font-size:17px;
+    font-weight:700;
+}
+
+.hypeMemberReferrals{
+    color:#cfcfcf;
+    font-size:15px;
+    font-weight:600;
+}
+
+@media(max-width:768px){
+
+    .hypeMemberRow{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:8px;
+    }
+
+}
