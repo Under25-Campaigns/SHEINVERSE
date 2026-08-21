@@ -200,6 +200,13 @@
 
     <div class="toolbarButtons">
 
+         <button
+            class="primaryButton"
+            onclick="openHypeModal()">
+
+            + Add HypeSquad
+
+        </button>
         <button
 
             class="primaryButton"
@@ -215,6 +222,15 @@
 </section>
 
 
+    <!-- ===================================================== -->
+<!-- CAMPUS AMBASSADORS -->
+<!-- ===================================================== -->
+
+<div class="dashboardSectionTitle">
+
+    CAs
+
+</div>
 <!-- ===================================================== -->
 <!-- CA CARDS -->
 <!-- ===================================================== -->
@@ -227,6 +243,32 @@
 
 </section>
 
+
+    <!-- ===================================================== -->
+<!-- HYPE SQUAD -->
+<!-- ===================================================== -->
+
+<div class="dashboardSectionTitle hypeTitle">
+
+    <span>
+        HypeSquad
+    </span>
+
+    <span class="dashboardSectionDivider">
+        •
+    </span>
+
+    <span>
+        Referrals brought in by them
+    </span>
+
+</div>
+
+<section
+    id="hypeContainer"
+    class="hypeContainer">
+</section>
+    
 <!-- ===================================================== -->
 <!-- CREATOR MODAL -->
 <!-- ===================================================== -->    
@@ -286,6 +328,68 @@
                 onclick="addCreator()">
 
                 Add Creator
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- ADD HYPE SQUAD MODAL -->
+<!-- ===================================================== -->
+
+<div
+    id="hypeModal"
+    class="modal hidden">
+
+    <div class="modalCard">
+
+        <h2>
+
+            Add Hype Squad Member
+
+        </h2>
+
+        <input
+            id="hypeName"
+            type="text"
+            placeholder="Name">
+
+        <input
+            id="hypePhone"
+            type="text"
+            placeholder="Phone Number">
+
+        <input
+            id="hypeEmail"
+            type="email"
+            placeholder="Email Address">
+
+        <p
+            id="hypeError"
+            class="formError">
+        </p>
+
+        <div class="modalButtons">
+
+            <button
+                class="secondaryButton"
+                onclick="closeHypeModal()">
+
+                Cancel
+
+            </button>
+
+            <button
+                id="addHypeButton"
+                class="primaryButton"
+                onclick="addHypeSquad()">
+
+                Add HypeSquad
 
             </button>
 
