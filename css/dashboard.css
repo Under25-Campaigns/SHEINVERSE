@@ -1549,63 +1549,75 @@ font-weight:600;
 }
 
 /* ===========================================================
-   LCA DASHBOARD GROUPS
+   SECTION WRAPPERS
 =========================================================== */
 
 .dashboardGroup{
-    margin-top:38px;
+    margin:38px 32px 0;
 }
 
 .dashboardGroupHeader{
-    display:flex;
+    display:inline-flex;
     align-items:center;
-    justify-content:space-between;
-    margin-bottom:18px;
-    padding:0 4px;
+
+    padding:14px 20px;
+
+    margin-bottom:20px;
+
+    background:rgba(255,255,255,.07);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    border-radius:18px;
 }
 
 .dashboardGroupTitle{
     margin:0;
+
     color:#ffffff;
-    font-size:24px;
+
+    font-size:22px;
+
     font-weight:800;
 }
 
 .dashboardGroupStats{
     display:flex;
+
     align-items:center;
+
     gap:10px;
-    margin-top:8px;
+
+    margin-top:6px;
+
     color:#aaa3b5;
-    font-size:15px;
+
+    font-size:14px;
+
     font-weight:600;
 }
 
 
 /* ===========================================================
-   HYPE SQUAD
+   HYPE CARD
 =========================================================== */
-
-.hypeContainer{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-}
 
 .hypeCard{
     display:flex;
+
     align-items:center;
-    justify-content:space-between;
+
+    justify-content:flex-start;
+
+    gap:40px;
 
     min-height:104px;
 
     padding:22px 28px;
 
-    background:
-        rgba(255,255,255,.08);
+    background:rgba(255,255,255,.08);
 
-    border:
-        1px solid rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.14);
 
     border-radius:22px;
 
@@ -1613,65 +1625,116 @@ font-weight:600;
 }
 
 .hypeCard:hover{
-    background:
-        rgba(255,255,255,.10);
+    background:rgba(255,255,255,.10);
 
-    transform:
-        translateY(-1px);
+    transform:translateY(-1px);
 }
 
 .hypeCardLeft{
     display:flex;
+
     align-items:center;
+
     gap:18px;
+
+    min-width:260px;
 }
 
 .hypeAvatar{
     width:48px;
+
     height:48px;
 
     border-radius:50%;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
-    background:
-        rgba(255,255,255,.10);
+    background:rgba(255,255,255,.10);
 
     font-size:24px;
 }
 
 .hypeName{
     color:#ffffff;
+
     font-size:20px;
+
     font-weight:750;
 }
 
 .hypeCardRight{
-    min-width:120px;
+    min-width:auto;
 
-    text-align:right;
+    text-align:left;
 
-    padding-left:28px;
+    padding-left:24px;
 
-    border-left:
-        1px solid rgba(255,255,255,.10);
+    border-left:1px solid rgba(255,255,255,.10);
 }
 
 .hypeReferralNumber{
     color:#ffffff;
-    font-size:26px;
+
+    font-size:24px;
+
     font-weight:800;
 }
 
 .hypeReferralLabel{
-    margin-top:4px;
+    margin-top:3px;
 
     color:#aaa3b5;
 
     font-size:13px;
+
     font-weight:600;
+}
+
+
+/* ===========================================================
+   RESPONSIVE
+=========================================================== */
+
+@media(max-width:768px){
+
+    .dashboardGroup{
+        margin:28px 16px 0;
+    }
+
+    .dashboardGroupHeader{
+        padding:12px 16px;
+    }
+
+    .hypeCard{
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:16px;
+
+        padding:20px;
+    }
+
+    .hypeCardLeft{
+        min-width:0;
+    }
+
+    .hypeCardRight{
+        padding-left:0;
+
+        padding-top:14px;
+
+        border-left:none;
+
+        border-top:1px solid rgba(255,255,255,.10);
+
+        width:100%;
+    }
+
 }
 
 .hypeEmptyState{
