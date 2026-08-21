@@ -1,5 +1,6 @@
 let SESSION = null;
 let CAMPUS_AMBASSADORS = [];
+let HYPE_SQUAD = [];
 let CURRENT_REEL_ID = null;
 
 
@@ -65,42 +66,59 @@ function resetSessionTimer() {
 async function loadDashboard() {
 
     try {
+        const response =
+            await fetch(
+                CONFIG.API_URL +
+                "?action=getLCAOverview" +
+                "&lcaName=" +
+                encodeURIComponent(
+                    SESSION.name
+                ) +
+                "&t=" +
+                Date.now()
+            );
 
-        const response = await fetch(
-
-            CONFIG.API_URL +
-            "?action=getLCAOverview" +
-            "&lcaName=" +
-            encodeURIComponent(SESSION.name)
-
-        );
-
-        const data = await response.json();
+        const data =
+            await response.json();
 
         if (!data.success) {
-
-            alert(data.message);
+            alert(
+                data.message
+            );
             return;
-
         }
 
         CAMPUS_AMBASSADORS =
-            data.campusAmbassadors;
+            Array.isArray(
+                data.campusAmbassadors
+            )
+            ? data.campusAmbassadors
+            : [];
 
-        document.getElementById("referralCount").innerText =
-            data.referralCount || 0;
+        HYPE_SQUAD =
+            Array.isArray(
+                data.hypeSquad
+            )
+            ? data.hypeSquad
+            : [];
 
+        document
+            .getElementById(
+                "referralCount"
+            )
+            .innerText =
+            Number(
+                data.referralCount || 0
+            ).toLocaleString();
         renderDashboard();
-
     }
 
     catch (err) {
-
         console.error(err);
-        alert("Unable to connect.");
-
+        alert(
+            "Unable to connect."
+        );
     }
-
 }
 
 
@@ -147,6 +165,7 @@ function renderDashboard() {
         rejected;
 
     renderCACards(CAMPUS_AMBASSADORS);
+    renderHypeSquad(HYPE_SQUAD);
 
 }
 
@@ -749,6 +768,79 @@ async function rejectCurrentReel(){
     }
 }
 
+function renderHypeSquad(list) {
+
+    const container =
+        document.getElementById(
+            "hypeContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    if (!list.length) {
+
+        container.innerHTML = `
+
+            <div class="adminEmptyState">
+
+                No Hype Squad members added yet.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.forEach(member => {
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "hypeMemberRow";
+
+
+        row.innerHTML = `
+
+            <div class="hypeMemberName">
+
+                ${member.name}
+
+            </div>
+
+            <div class="hypeMemberReferrals">
+
+                ${Number(
+                    member.referralCount || 0
+                ).toLocaleString()}
+                Referrals
+
+            </div>
+
+        `;
+
+
+        container.appendChild(
+            row
+        );
+
+    });
+
+}
 
 /* ===========================================================
    AUTO REFRESH
