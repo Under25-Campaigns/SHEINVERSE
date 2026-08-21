@@ -164,8 +164,26 @@ function renderDashboard() {
     document.getElementById("rejectedReels").innerHTML =
         rejected;
 
+    const caSectionCount =
+    document.getElementById(
+        "caSectionCount"
+    );
+
+if (caSectionCount) {
+
+    caSectionCount.innerHTML =
+        CAMPUS_AMBASSADORS.length +
+        (
+            CAMPUS_AMBASSADORS.length === 1
+                ? " Campus Ambassador"
+                : " Campus Ambassadors"
+        );
+
+}
+
     renderCACards(CAMPUS_AMBASSADORS);
     renderHypeSquad(HYPE_SQUAD);
+    
 
 }
 
@@ -1059,23 +1077,66 @@ function renderHypeSquad(list) {
             "hypeContainer"
         );
 
-
     if (!container) {
         return;
     }
 
+    container.innerHTML = "";
 
-    container.innerHTML =
-        "";
+    let totalReferrals = 0;
 
+    list.forEach(member => {
+
+        totalReferrals +=
+            Number(
+                member.referralCount || 0
+            );
+
+    });
+
+    const memberCount =
+        document.getElementById(
+            "hypeMemberCount"
+        );
+
+    if (memberCount) {
+
+        memberCount.innerHTML =
+            list.length +
+            (
+                list.length === 1
+                    ? " Member"
+                    : " Members"
+            );
+
+    }
+
+    const referralTotal =
+        document.getElementById(
+            "hypeReferralTotal"
+        );
+
+    if (referralTotal) {
+
+        referralTotal.innerHTML =
+            Number(
+                totalReferrals
+            ).toLocaleString() +
+            (
+                totalReferrals === 1
+                    ? " Referral"
+                    : " Referrals"
+            );
+
+    }
 
     if (!list.length) {
 
         container.innerHTML = `
 
-            <div class="adminEmptyState">
+            <div class="hypeEmptyState">
 
-                No Hype Squad members added yet.
+                No HypeSquad members added yet.
 
             </div>
 
@@ -1085,42 +1146,63 @@ function renderHypeSquad(list) {
 
     }
 
-
     list.forEach(member => {
 
-        const row =
-            document.createElement(
-                "div"
+        const referrals =
+            Number(
+                member.referralCount || 0
             );
 
+        const html = `
 
-        row.className =
-            "hypeMemberRow";
+            <div class="hypeCard">
 
+                <div class="hypeCardLeft">
 
-        row.innerHTML = `
+                    <div class="hypeAvatar">
 
-            <div class="hypeMemberName">
+                        👤
 
-                ${member.name}
+                    </div>
 
-            </div>
+                    <div>
 
-            <div class="hypeMemberReferrals">
+                        <div class="hypeName">
 
-                ${Number(
-                    member.referralCount || 0
-                ).toLocaleString()}
-                Referrals
+                            ${member.name}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="hypeCardRight">
+
+                    <div class="hypeReferralNumber">
+
+                        ${referrals.toLocaleString()}
+
+                    </div>
+
+                    <div class="hypeReferralLabel">
+
+                        ${
+                            referrals === 1
+                                ? "Referral"
+                                : "Referrals"
+                        }
+
+                    </div>
+
+                </div>
 
             </div>
 
         `;
 
-
-        container.appendChild(
-            row
-        );
+        container.innerHTML +=
+            html;
 
     });
 
