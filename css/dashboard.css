@@ -1549,61 +1549,173 @@ font-weight:600;
 }
 
 /* ===========================================================
-   HYPE SQUAD
+   LCA DASHBOARD GROUPS
 =========================================================== */
 
-.dashboardSectionTitle{
-    margin:34px 0 16px;
-    font-size:20px;
-    font-weight:700;
-    color:#ffffff;
+.dashboardGroup{
+    margin-top:38px;
 }
 
-.dashboardSectionDivider{
-    opacity:.5;
-    margin:0 8px;
-}
-
-.hypeTitle{
-    margin-top:46px;
-}
-
-.hypeContainer{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    margin-bottom:40px;
-}
-
-.hypeMemberRow{
+.dashboardGroupHeader{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:20px;
-    padding:20px 24px;
-    border-radius:16px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.10);
+    margin-bottom:18px;
+    padding:0 4px;
 }
 
-.hypeMemberName{
+.dashboardGroupTitle{
+    margin:0;
     color:#ffffff;
-    font-size:17px;
-    font-weight:700;
+    font-size:24px;
+    font-weight:800;
 }
 
-.hypeMemberReferrals{
-    color:#cfcfcf;
+.dashboardGroupStats{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:8px;
+    color:#aaa3b5;
     font-size:15px;
     font-weight:600;
 }
 
+
+/* ===========================================================
+   HYPE SQUAD
+=========================================================== */
+
+.hypeContainer{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.hypeCard{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    min-height:104px;
+
+    padding:22px 28px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.14);
+
+    border-radius:22px;
+
+    transition:.2s ease;
+}
+
+.hypeCard:hover{
+    background:
+        rgba(255,255,255,.10);
+
+    transform:
+        translateY(-1px);
+}
+
+.hypeCardLeft{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.hypeAvatar{
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        rgba(255,255,255,.10);
+
+    font-size:24px;
+}
+
+.hypeName{
+    color:#ffffff;
+    font-size:20px;
+    font-weight:750;
+}
+
+.hypeCardRight{
+    min-width:120px;
+
+    text-align:right;
+
+    padding-left:28px;
+
+    border-left:
+        1px solid rgba(255,255,255,.10);
+}
+
+.hypeReferralNumber{
+    color:#ffffff;
+    font-size:26px;
+    font-weight:800;
+}
+
+.hypeReferralLabel{
+    margin-top:4px;
+
+    color:#aaa3b5;
+
+    font-size:13px;
+    font-weight:600;
+}
+
+.hypeEmptyState{
+    padding:26px;
+
+    text-align:center;
+
+    color:#aaa3b5;
+
+    background:
+        rgba(255,255,255,.05);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius:22px;
+}
+
+
+/* ===========================================================
+   RESPONSIVE
+=========================================================== */
+
 @media(max-width:768px){
 
-    .hypeMemberRow{
-        flex-direction:column;
+    .dashboardGroupHeader{
         align-items:flex-start;
-        gap:8px;
+    }
+
+    .dashboardGroupStats{
+        flex-wrap:wrap;
+    }
+
+    .hypeCard{
+        padding:20px;
+    }
+
+    .hypeCardRight{
+        min-width:auto;
+        padding-left:18px;
+    }
+
+    .hypeName{
+        font-size:18px;
     }
 
 }
