@@ -78,39 +78,61 @@ function resetSessionTimer(){
    LOAD
 =========================================================== */
 async function loadDashboard(){
+
     try{
+
         const response =
             await fetch(
-                CONFIG.API_URL+
-                "?action=getAdminDashboard"+
-                "&adminUsername="+
+
+                CONFIG.API_URL +
+                "?action=getAdminDashboard" +
+                "&adminUsername=" +
                 encodeURIComponent(
                     SESSION.username
-                )
+                ) +
+                "&t=" +
+                Date.now(),
+
+                {
+                    cache: "no-store"
+                }
+
             );
+
         const data =
             await response.json();
+
         if(!data.success){
+
             alert(data.message);
+
             return;
+
         }
 
         COLLEGES =
             data.colleges;
+
         renderOverview(
             data.overview
         );
+
         renderCollegeCards(
             COLLEGES
         );
+
     }
 
     catch(err){
+
         console.error(err);
+
         alert(
             "Unable to connect."
         );
+
     }
+
 }
 
 /* ===========================================================
