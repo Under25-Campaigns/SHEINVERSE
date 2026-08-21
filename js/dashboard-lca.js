@@ -549,6 +549,102 @@ function closeCreatorModal(){
 
 }
 
+function openHypeModal() {
+
+    document
+        .getElementById(
+            "hypeName"
+        )
+        .value = "";
+
+    document
+        .getElementById(
+            "hypePhone"
+        )
+        .value = "";
+
+    document
+        .getElementById(
+            "hypeEmail"
+        )
+        .value = "";
+
+
+    const error =
+        document.getElementById(
+            "hypeError"
+        );
+
+    if (error) {
+
+        error.innerHTML =
+            "";
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "addHypeButton"
+        );
+
+    button.disabled =
+        false;
+
+    button.innerHTML =
+        "Add HypeSquad";
+
+
+    document
+        .getElementById(
+            "hypeModal"
+        )
+        .classList
+        .remove(
+            "hidden"
+        );
+
+}
+
+
+function closeHypeModal() {
+
+    const button =
+        document.getElementById(
+            "addHypeButton"
+        );
+
+    button.disabled =
+        false;
+
+    button.innerHTML =
+        "Add HypeSquad";
+
+
+    const error =
+        document.getElementById(
+            "hypeError"
+        );
+
+    if (error) {
+
+        error.innerHTML =
+            "";
+
+    }
+
+
+    document
+        .getElementById(
+            "hypeModal"
+        )
+        .classList
+        .add(
+            "hidden"
+        );
+
+}
+
 async function addCreator(){
 
     const assignedCA =
@@ -653,6 +749,194 @@ async function addCreator(){
         button.innerHTML="Add Creator";
 
         alert("Unable to add creator.");
+
+    }
+
+}
+
+async function addHypeSquad() {
+
+    const name =
+        document
+            .getElementById(
+                "hypeName"
+            )
+            .value
+            .trim();
+
+
+    const phone =
+        document
+            .getElementById(
+                "hypePhone"
+            )
+            .value
+            .trim();
+
+
+    const email =
+        document
+            .getElementById(
+                "hypeEmail"
+            )
+            .value
+            .trim();
+
+
+    const button =
+        document.getElementById(
+            "addHypeButton"
+        );
+
+
+    const error =
+        document.getElementById(
+            "hypeError"
+        );
+
+
+    if (error) {
+
+        error.innerHTML =
+            "";
+
+    }
+
+
+    if (
+        !name ||
+        !phone ||
+        !email
+    ) {
+
+        if (error) {
+
+            error.innerHTML =
+                "Please complete all fields.";
+
+        }
+
+        return;
+
+    }
+
+
+    button.disabled =
+        true;
+
+    button.innerHTML =
+        "Adding...";
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                CONFIG.API_URL +
+
+                "?action=addHypeSquad" +
+
+                "&name=" +
+
+                encodeURIComponent(
+                    name
+                ) +
+
+                "&phone=" +
+
+                encodeURIComponent(
+                    phone
+                ) +
+
+                "&email=" +
+
+                encodeURIComponent(
+                    email
+                ) +
+
+                "&college=" +
+
+                encodeURIComponent(
+                    SESSION.college
+                ) +
+
+                "&assignedLCA=" +
+
+                encodeURIComponent(
+                    SESSION.name
+                ) +
+
+                "&t=" +
+
+                Date.now()
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            button.disabled =
+                false;
+
+            button.innerHTML =
+                "Add HypeSquad";
+
+
+            if (error) {
+
+                error.innerHTML =
+                    data.message;
+
+            }
+
+            return;
+
+        }
+
+
+        button.innerHTML =
+            "Added ✓";
+
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    800
+                )
+        );
+
+
+        closeHypeModal();
+
+
+        await loadDashboard();
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+
+        button.disabled =
+            false;
+
+        button.innerHTML =
+            "Add HypeSquad";
+
+
+        if (error) {
+
+            error.innerHTML =
+                "Unable to add Hype Squad member.";
+
+        }
 
     }
 
