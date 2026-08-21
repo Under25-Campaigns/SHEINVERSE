@@ -1551,7 +1551,11 @@ font-weight:600;
 /* ===========================================================
    SECTION WRAPPERS
 =========================================================== */
+/* HypeSquad section should sit closer to CA cards */
 
+.dashboardGroup + .dashboardGroup{
+    margin-top:70px;
+}
 .dashboardGroup{
     margin:38px 32px 0;
 }
@@ -1604,16 +1608,15 @@ font-weight:600;
 
 .hypeCard{
     display:flex;
-
     align-items:center;
-
     justify-content:flex-start;
 
     gap:40px;
 
-    min-height:104px;
+    /* Match CA card spacing */
+    min-height:116px;
 
-    padding:22px 28px;
+    padding:28px 30px;
 
     background:rgba(255,255,255,.08);
 
